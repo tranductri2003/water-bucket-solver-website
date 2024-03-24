@@ -16,7 +16,7 @@ class Graph:
         self.initBucket = initBucket
         self.targetBucket = targetBucket
         self.bucketCapacity = bucketCapacity
-        self.numBuckets = len(targetBucket)
+        self.numBuckets = len(initBucket)
     
     def printBucket(self, currentBucket):
         bucket_info = ""
@@ -24,11 +24,11 @@ class Graph:
             if i != self.numBuckets - 1:
                 bucket_info += f"\033[94mBucket {i+1}: {currentBucket[i]}/{self.bucketCapacity[i]} Litre\033[0m, "
             else:
-                bucket_info += f"\033[92mTank: {currentBucket[i]}/{self.targetBucket[i]} Litre\033[0m"
+                bucket_info += f"\033[92mTank: {currentBucket[i]}/{self.targetBucket} Litre\033[0m"
         print(bucket_info)   
         
     def countMahattan(self, currentBucket):
-        mahattanValue = abs(self.targetBucket[-1] - currentBucket[-1])
+        mahattanValue = abs(self.targetBucket - currentBucket[-1])
         return mahattanValue
     
     def waterTransfer(self, currentBucket):
@@ -134,7 +134,8 @@ class Graph:
         while open_set:
             _, current_state = heapq.heappop(open_set)
 
-            if current_state.bucket == self.targetBucket:
+            if current_state.bucket[-1] == self.targetBucket:
+                self.lastState= current_state.bucket
                 print("Solution found!")
                 break
             else:
@@ -152,7 +153,7 @@ class Graph:
             return
 
         path = []
-        currentBucket = tuple(self.targetBucket)
+        currentBucket = tuple(self.lastState)
         
         while currentBucket != tuple(self.initBucket):
             path.append(tuple(currentBucket))
@@ -170,31 +171,33 @@ class Graph:
                 print(f"Step {step}: {action}")
                 self.printBucket(bucket) 
                 if i < len(path) - 1:
-                    print("↓")
+                    print("\t\t\t\t↓")
                 step += 1
             else:
                 print(f"Initial state: ")
                 self.printBucket(bucket)
-                print("↓")
+                print("\t\t\t\t↓")
                 
         solution[i] = bucket 
         print()
                 
         return solution
 
-# Input đề bài
-initBucket = [0,0,0,0]       
-targetBucket = [0,0,0,17]
-bucketCapacity = [7,8,9]
+numBucket = int(input("How many buckets in total? "))
+initBucket = [0] * (numBucket+1)
+targetBucket = int(input("How much water do you want? "))
+bucketCapacity = list(map(int, input("What are your capacities? ").split()))
 
-# initBucket = [0, 0]
-# targetBucket = [0, 5]
-# bucketCapacity = [5]
 
 graph = Graph(initBucket, targetBucket, bucketCapacity)
 graph.A_Star()
                     
 
+"""
+3
+17
+7 8 9
+"""
              
     
         

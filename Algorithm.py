@@ -29,10 +29,6 @@ class Graph:
         
     def countMahattan(self, currentBucket):
         mahattanValue = abs(self.targetBucket[-1] - currentBucket[-1])
-        
-        # for i in range(self.numBuckets):
-        #     mahattanValue += abs(self.targetBucket[i] - currentBucket[i])
-        
         return mahattanValue
     
     def waterTransfer(self, currentBucket):
@@ -125,15 +121,7 @@ class Graph:
                             message = f"Pour {waterAmount} litres water from bucket {i+1} into bucket {j+1}"
                             break
                     break
-        
-  
-        return not pourWaterFromBucketToRiver, message
-                
-
-        
-        
-            
-            
+        return message
         
     def A_Star(self):
         open_set = []
@@ -177,19 +165,13 @@ class Graph:
         solution = defaultdict()
         step = 1
         for i, bucket in enumerate(path):
-            if i >=1:
-                countStep, action = self.checkAction(path[i-1], path[i])
-                if countStep:
-                    print(f"Step {step}: {action}")
-                    self.printBucket(bucket) 
-                    if i < len(path) - 1:
-                        print("↓")
-                    step += 1
-                else:
-                    print(f"{action}")
-                    self.printBucket(bucket) 
-                    if i < len(path) - 1:
-                        print("↓")
+            if i >= 1:
+                action = self.checkAction(path[i-1], path[i])
+                print(f"Step {step}: {action}")
+                self.printBucket(bucket) 
+                if i < len(path) - 1:
+                    print("↓")
+                step += 1
             else:
                 print(f"Initial state: ")
                 self.printBucket(bucket)

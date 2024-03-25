@@ -26,6 +26,26 @@ class Graph:
             else:
                 bucket_info += f"\033[92mTank: {currentBucket[i]}/{self.targetBucket} Litre\033[0m"
         print(bucket_info)   
+            
+    def visualizeBucket(self, buckets):
+        max_capacity = max(self.bucketCapacity)
+        for i, (water_level, capacity) in enumerate(zip(buckets[:-1], self.bucketCapacity)):        
+            water_fraction = water_level / capacity
+            fill_width = int(water_fraction * 20)
+            fill = "\033[94m█" * fill_width + "\033[0m"
+            empty = " " * (20 - fill_width)
+            print(f"           ┌" + "─" * 20 + "┐")
+            print(f"Bucket {i+1}   │{fill}{empty}│ \033[92m{water_level}/{self.bucketCapacity[i]}\033[0m")
+            print(f"           └" + "─" * 20 + "┘")
+            
+        water_fraction = buckets[-1] / self.targetBucket
+
+        fill_width = int(water_fraction * 20)
+        fill = "\033[94m█" * fill_width + "\033[0m"
+        empty = " " * (20 - fill_width)
+        print(f"           ┌" + "─" * 20 + "┐")
+        print(f"Tank       │{fill}{empty}│ \033[92m{buckets[-1]}/{self.targetBucket}\033[0m")
+        print(f"           └" + "─" * 20 + "┘")
         
     def countMahattan(self, currentBucket):
         mahattanValue = abs(self.targetBucket - currentBucket[-1])
@@ -136,7 +156,7 @@ class Graph:
 
             if current_state.bucket[-1] == self.targetBucket:
                 self.lastState= current_state.bucket
-                print("Solution found!")
+                print("\033[95m\n\n\nSolution found!\n\n\n\033[0m")
                 break
             else:
                 close_set.add(tuple(current_state.bucket))
@@ -149,7 +169,7 @@ class Graph:
                         heapq.heappush(open_set, (neighbor_state.f, neighbor_state))
                         ancestor[tuple(neighbor_bucket)] = current_state.bucket
         else:
-            print("No solution exists!")
+            print("\033[91m\n\n\nNo solution exists!\n\n\n\033[0m")
             return
 
         path = []
@@ -170,13 +190,18 @@ class Graph:
                 action = self.checkAction(path[i-1], path[i])
                 print(f"Step {step}: {action}")
                 self.printBucket(bucket) 
+                self.visualizeBucket(bucket)
                 if i < len(path) - 1:
-                    print("\t\t\t\t↓")
+                    print("\n\n\t\t\t\t\u21E9\u21E9\u21E9\n\n")  
+
                 step += 1
             else:
                 print(f"Initial state: ")
                 self.printBucket(bucket)
-                print("\t\t\t\t↓")
+                self.visualizeBucket(bucket)
+                print("\n\n\t\t\t\t\u21E9\u21E9\u21E9\n\n")  
+
+
                 
         solution[i] = bucket 
         print()

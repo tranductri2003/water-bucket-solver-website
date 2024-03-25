@@ -23,26 +23,26 @@ class Graph:
         bucket_info = ""
         for i in range(self.numBuckets):
             if i != self.numBuckets - 1:
-                bucket_info += f"- Bucket {i+1}: {currentBucket[i]}/{self.bucketCapacity[i]} Litre\n"
+                bucket_info += f"- **Bucket {i+1}:** {currentBucket[i]}/{self.bucketCapacity[i]} Litre\n"
             else:
-                bucket_info += f"- Tank: {currentBucket[i]}/{self.targetBucket} Litre\n"
-        st.write(bucket_info)   
+                bucket_info += f"- **Tank:** {currentBucket[i]}/{self.targetBucket} Litre\n"
+        st.markdown(bucket_info)
+  
             
     def visualizeBucket(self, buckets):
-        max_capacity = max(self.bucketCapacity)
-        for i, (water_level, capacity) in enumerate(zip(buckets[:-1], self.bucketCapacity)):        
+        for i, (water_level, capacity) in enumerate(zip(buckets[:-1], self.bucketCapacity)):
             water_fraction = water_level / capacity
-            fill_width = int(water_fraction * 20)
-            fill = "█" * fill_width
-            empty = " " * (20 - fill_width)
-            st.text(f"Bucket {i+1}: [{fill}{empty}] {water_level}/{self.bucketCapacity[i]}")
-            
-        water_fraction = buckets[-1] / self.targetBucket
+            st.write(f"Bucket {i+1}:")
+            st.progress(water_fraction)
+            st.markdown(f"<span style='color:blue'>{water_level}/{capacity} Litre</span>", unsafe_allow_html=True)
 
-        fill_width = int(water_fraction * 20)
-        fill = "█" * fill_width
-        empty = " " * (20 - fill_width)
-        st.text(f"Tank:     [{fill}{empty}] {buckets[-1]}/{self.targetBucket}")
+        tank_water_fraction = buckets[-1] / self.targetBucket
+        st.write("Tank:")
+        st.progress(tank_water_fraction)
+        st.markdown(f"<span style='color:blue'>{buckets[-1]}/{self.targetBucket} Litre</span>", unsafe_allow_html=True)
+
+
+
         
     def countMahattan(self, currentBucket):
         mahattanValue = abs(self.targetBucket - currentBucket[-1])
@@ -167,31 +167,40 @@ class Graph:
 
         solution = defaultdict()
         step = 1
+        
         for i, bucket in enumerate(path):
             if i >= 1:
                 action = self.checkAction(path[i-1], path[i])
-                st.write(f"Step {step}: {action}")
+                st.markdown("---")
+                st.write(f"**Step {step}:** {action}")
+                st.markdown("---")
                 self.printBucket(bucket) 
                 self.visualizeBucket(bucket)
                 if i < len(path) - 1:
-                    st.write("\n\n\n")
+                    st.markdown("---")
 
                 step += 1
             else:
-                st.write(f"Initial state: ")
+                st.write(f"**Initial state:** ")
                 self.printBucket(bucket)
                 self.visualizeBucket(bucket)
                 if len(path) > 1:
-                    st.write("\n\n\n")
+                    st.markdown("---")
+
+
 
         solution[i] = bucket 
 
         return solution
 
-numBucket = st.number_input("How many buckets in total?", min_value=1, step=1)
+default_num_buckets = 3
+default_target_bucket = 17
+default_bucket_capacity = "7 8 9"
+
+numBucket = st.number_input("How many buckets in total? (e.g: 3)", min_value=1, step=1, value=default_num_buckets)
 initBucket = [0] * (numBucket + 1)
-targetBucket = st.number_input("How much water do you want?", min_value=1, step=1)
-bucketCapacity = st.text_input("What are your capacities? (Enter values separated by space)")
+targetBucket = st.number_input("How much water do you want? (e.g: 17)", min_value=1, step=1, value=default_target_bucket)
+bucketCapacity = st.text_input("What are your capacities? (Enter values separated by space) (e.g: 7 8 9)", value=default_bucket_capacity)
 
 if st.button("Run"):
     bucketCapacity = list(map(int, bucketCapacity.split()))
